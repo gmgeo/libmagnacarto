@@ -3,6 +3,7 @@ package main
 /*
 typedef struct {
     char* builderType;
+    char* baseDir;
     char* sqliteDir;
     char* fontDir;
     char* shapeDir;
@@ -18,13 +19,28 @@ import (
 import (
     "bytes"
     "fmt"
+    "io/ioutil"
     "path/filepath"
 
-    "github.com/omniscale/magnacarto/builder"
-    "github.com/omniscale/magnacarto/builder/mapnik"
-    "github.com/omniscale/magnacarto/builder/mapserver"
-    "github.com/omniscale/magnacarto/config"
+    "github.com/gmgeo/mc/builder"
+    "github.com/gmgeo/mc/builder/mapnik"
+    "github.com/gmgeo/mc/builder/mapserver"
+    "github.com/gmgeo/mc/config"
 )
+
+//export buildFromString
+func buildFromString(mmlStr *C.char, options C.Opts) (output, error *C.char) {
+    mml := C.GoString(mmlStr)
+    if mml == "" {
+        return nil, C.CString("Please specify a MML string.")
+    }
+    baseDir := C.GoString(options.baseDir)
+    if baseDir == "" {
+        return nil, C.CString("Please specify a basedir path.")
+    }
+
+    return build(mml, baseDir, options)
+}
 
 //export buildFromFile
 func buildFromFile(file *C.char, options C.Opts) (output, error *C.char) {
@@ -33,6 +49,20 @@ func buildFromFile(file *C.char, options C.Opts) (output, error *C.char) {
         return nil, C.CString("Please specify a file path.")
     }
 
+    mml, err := ioutil.ReadFile(filePath)
+    if err != nil {
+        return nil, C.CString(fmt.Sprint("Error when reading from file ", filePath, ": ", err))
+    }
+
+    baseDir := C.GoString(options.baseDir)
+    if baseDir == "" {
+        baseDir = filepath.Dir(filePath)
+    }
+
+    return build(string(mml), baseDir, options)
+}
+
+func build(mml string, baseDir string, options C.Opts) (output, error *C.char) {
     conf := config.Magnacarto{}
     locator := conf.Locator()
 
@@ -62,7 +92,7 @@ func buildFromFile(file *C.char, options C.Opts) (output, error *C.char) {
 	}
     msNoMapBlock := bool(options.msNoMapBlock)
 
-    locator.SetBaseDir(filepath.Dir(filePath))
+    locator.SetBaseDir(baseDir)
     var m builder.MapWriter
 
     switch builderType {
@@ -81,7 +111,8 @@ func buildFromFile(file *C.char, options C.Opts) (output, error *C.char) {
     }
 
     b := builder.New(m)
-    b.SetMML(filePath)
+    b.SetBaseDir(baseDir)
+    b.SetMML(mml)
 
     if err := b.Build(); err != nil {
         return nil, C.CString(fmt.Sprint(err))

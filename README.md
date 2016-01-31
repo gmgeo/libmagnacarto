@@ -6,11 +6,19 @@ Exposes a C API of [omniscale/magnacarto](https://github.com/omniscale/magnacart
 
 `buildFromFile(file *C.char, options C.Opts) (*C.char)`
 
-Expects a file path as well as a struct with options as input and returns a Mapnik or Mapserver style string. The options struct has the following C type definition:
+Expects a file path as well as a struct with options (see below) as input and returns a Mapnik or Mapserver style string.
+
+`buildFromString(mmlStr *C.char, options C.Opts) (output, error *C.char)`
+
+Expects a MML string in either JSON or YAML format and a struct with options (see below)
+as input and returns a Mapnik or Mapserver style string.
+
+The options struct has the following C type definition:
 
 ```
 typedef struct {
     char* builderType;
+    char* baseDir;
     char* sqliteDir;
     char* fontDir;
     char* shapeDir;
@@ -33,10 +41,10 @@ Let's assume you want to develop within the directory `libmagnacarto`, then do t
 ```
 mkdir libmagnacarto
 cd libmagnacarto
-export $GOROOT=`pwd`
-go get github.com/tools/godep # add godep to your PATH for convenience
+export $GOPATH=`pwd`
+go get github.com/tools/godep
 git clone https://github.com/gmgeo/libmagnacarto src/github.com/gmgeo/libmagnacarto
 cd src/github.com/gmgeo/libmagnacarto
-godep restore
+$GOPATH/bin/godep restore
 make
 ```
