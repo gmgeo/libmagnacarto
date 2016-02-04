@@ -282,12 +282,8 @@ func (c *Cache) build(style *style) error {
 	m := style.mapMaker.New(l)
 	builder := New(m)
 	builder.SetIncludeInactive(false)
-	builder.SetBaseDir(filepath.Dir(style.mml))
-	mml, err := ioutil.ReadFile(style.mml)
-	if err != nil {
-		return err
-	}
-	builder.SetMML(string(mml))
+
+	builder.SetMML(style.mml)
 	for _, mss := range style.mss {
 		builder.AddMSS(mss)
 	}
@@ -325,12 +321,13 @@ func (c *Cache) build(style *style) error {
 }
 
 func mssFilesFromMML(mmlFile string) ([]string, error) {
-	r, err := ioutil.ReadFile(mmlFile)
+	r, err := os.Open(mmlFile)
 	if err != nil {
 		return nil, err
 	}
+	defer r.Close()
 
-	mml, err := mmlparse.Parse(string(r))
+	mml, err := mmlparse.Parse(r)
 	if err != nil {
 		return nil, err
 	}

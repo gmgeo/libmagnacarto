@@ -16,7 +16,7 @@ type XMLMap struct {
 
 type Parameter struct {
 	Name  string `xml:"name,attr"`
-	Value string `xml:",chardata"`
+	Value string `xml:",cdata"`
 }
 
 type FontSet struct {
@@ -139,6 +139,8 @@ type TextSymbolizer struct {
 	Opacity          *string  `xml:"opacity,attr"`
 	Orientation      *string  `xml:"orientation,attr"`
 	Placement        *string  `xml:"placement,attr"`
+	PlacementType    *string  `xml:"placement-type,attr"`
+	Placements       *string  `xml:"placements,attr"`
 	Size             *string  `xml:"size,attr"`
 	Spacing          *string  `xml:"spacing,attr"`
 	TextTransform    *string  `xml:"text-transform,attr"`
@@ -169,8 +171,8 @@ type ShieldSymbolizer struct {
 	AvoidEdges       *string  `xml:"avoid-edges,attr"`
 	CharacterSpacing *string  `xml:"character-spacing,attr"`
 	Clip             *string  `xml:"clip,attr"`
-	Dx               *string  `xml:"dx,attr"`
-	Dy               *string  `xml:"dy,attr"`
+	Dx               *string  `xml:"shield-dx,attr"`
+	Dy               *string  `xml:"shield-dy,attr"`
 	FaceName         *string  `xml:"face-name,attr"`
 	File             *string  `xml:"file,attr"`
 	Fill             *string  `xml:"fill,attr"`
@@ -183,10 +185,13 @@ type ShieldSymbolizer struct {
 	Name             *string  `xml:",chardata"`
 	Opacity          *string  `xml:"opacity,attr"`
 	Placement        *string  `xml:"placement,attr"`
+	PlacementType    *string  `xml:"placement-type,attr"`
+	Placements       *string  `xml:"placements,attr"`
+	UnlockImage      *string  `xml:"unlock-image,attr"`
 	Size             *string  `xml:"size,attr"`
 	Spacing          *string  `xml:"spacing,attr"`
-	TextDx           *string  `xml:"text-dx,attr"`
-	TextDy           *string  `xml:"text-dy,attr"`
+	TextDx           *string  `xml:"dx,attr"`
+	TextDy           *string  `xml:"dy,attr"`
 	TextOpacity      *string  `xml:"text-opacity,attr"`
 	TextTransform    *string  `xml:"text-transform,attr"`
 	WrapBefore       *string  `xml:"wrap-before,attr"`

@@ -32,7 +32,7 @@ All these options are optional.
 ## Dependencies
 
 * Go >= 1.5
-* Godep
+* Glide
 * C Toolchain
 
 ## Building

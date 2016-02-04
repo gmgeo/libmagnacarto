@@ -1,0 +1,9 @@
+package: github.com/gmgeo/libmagnacarto
+import:
+- package: github.com/gmgeo/mc
+  subpackages:
+  - builder
+  - builder/mapnik
+  - builder/mapserver
+  - config
+  - mml

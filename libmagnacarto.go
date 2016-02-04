@@ -20,12 +20,15 @@ import (
     "bytes"
     "fmt"
     "io/ioutil"
+    "os"
     "path/filepath"
+    "strings"
 
     "github.com/gmgeo/mc/builder"
     "github.com/gmgeo/mc/builder/mapnik"
     "github.com/gmgeo/mc/builder/mapserver"
     "github.com/gmgeo/mc/config"
+    "github.com/gmgeo/mc/mml"
 )
 
 //export buildFromString
@@ -62,7 +65,7 @@ func buildFromFile(file *C.char, options C.Opts) (output, error *C.char) {
     return build(string(mml), baseDir, options)
 }
 
-func build(mml string, baseDir string, options C.Opts) (output, error *C.char) {
+func build(mmlStr string, baseDir string, options C.Opts) (output, error *C.char) {
     conf := config.Magnacarto{}
     locator := conf.Locator()
 
@@ -110,9 +113,30 @@ func build(mml string, baseDir string, options C.Opts) (output, error *C.char) {
         return nil, C.CString(fmt.Sprint("unknown builder ", builderType))
     }
 
+    r := strings.NewReader(mmlStr)
+    mmlData, err := mml.Parse(r)
+    if err != nil {
+        return nil, C.CString(fmt.Sprint(err))
+    }
+
     b := builder.New(m)
-    b.SetBaseDir(baseDir)
-    b.SetMML(mml)
+    b.SetMMLData(mmlData)
+
+    for _, s := range mmlData.Stylesheets {
+        if strings.Contains(s, ".mss") {
+            r, err := os.Open(filepath.Join(baseDir, s))
+            if err != nil {
+                return nil, C.CString(fmt.Sprint(err))
+            }
+            content, err := ioutil.ReadAll(r)
+            if err != nil {
+                return nil, C.CString(fmt.Sprint(err))
+            }
+            r.Close()
+            s = string(content)
+        }
+        b.AddMSS(s)
+    }
 
     if err := b.Build(); err != nil {
         return nil, C.CString(fmt.Sprint(err))

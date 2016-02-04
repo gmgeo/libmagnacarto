@@ -4,6 +4,8 @@ package builder
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/gmgeo/mc/color"
@@ -14,10 +16,11 @@ import (
 
 // Builder builds map styles from MML and MSS files.
 type Builder struct {
+	baseDir         string
 	dstMap          Map
 	mss             []string
-	basedir         string
-	mml             string
+	mmlFile         string
+	mmlData         *mml.MML
 	locator         config.Locator
 	dumpRules       io.Writer
 	includeInactive bool
@@ -29,8 +32,8 @@ func New(mw Map) *Builder {
 }
 
 // SetBaseDir sets the base directory for MSS files
-func (b *Builder) SetBaseDir(basedir string) {
-	b.basedir = basedir
+func (b *Builder) SetBaseDir(baseDir string) {
+	b.baseDir = baseDir
 }
 
 // AddMSS adds another mss file to this builder.
@@ -38,9 +41,14 @@ func (b *Builder) AddMSS(mss string) {
 	b.mss = append(b.mss, mss)
 }
 
-// SetMML sets/overwrites the mml string of this builder.
+// SetMML sets/overwrites the mml file of this builder.
 func (b *Builder) SetMML(mml string) {
-	b.mml = mml
+	b.mmlFile = mml
+}
+
+// SetMMLData sets/overwrites the mml data of this builder.
+func (b *Builder) SetMMLData(mml *mml.MML) {
+	b.mmlData = mml
 }
 
 // SetDumpRulesDest enables internal debuging output.
@@ -58,18 +66,40 @@ func (b *Builder) Build() error {
 	layerIDs := []string{}
 	layers := []mml.Layer{}
 
-	if b.mml != "" {
-		mml, err := mml.Parse(b.mml)
+	if b.mmlFile != "" {
+		r, err := os.Open(b.mmlFile)
+		if err != nil {
+			return err
+		}
+		defer r.Close()
+		b.mmlData, err = mml.Parse(r)
 		if err != nil {
 			return err
 		}
 		if len(b.mss) == 0 {
-			for _, s := range mml.Stylesheets {
-				b.mss = append(b.mss, filepath.Join(b.basedir, s))
+			var basedir string
+			if b.baseDir != "" {
+				basedir = b.baseDir
+			} else {
+				basedir = filepath.Dir(b.mmlFile)
+			}
+			for _, s := range b.mmlData.Stylesheets {
+				r, err := os.Open(filepath.Join(basedir, s))
+				if err != nil {
+					return err
+				}
+				content, err := ioutil.ReadAll(r)
+				if err != nil {
+					return err
+				}
+				r.Close()
+				b.mss = append(b.mss, string(content))
 			}
 		}
+	}
 
-		for _, l := range mml.Layers {
+	if b.mmlData.Layers != nil {
+		for _, l := range b.mmlData.Layers {
 			layers = append(layers, l)
 			layerIDs = append(layerIDs, l.ID)
 		}
@@ -78,7 +108,7 @@ func (b *Builder) Build() error {
 	carto := mss.New()
 
 	for _, mss := range b.mss {
-		err := carto.ParseFile(mss)
+		err := carto.ParseString(mss)
 		if err != nil {
 			return err
 		}
@@ -88,7 +118,7 @@ func (b *Builder) Build() error {
 		return err
 	}
 
-	if b.mml == "" {
+	if b.mmlData.Layers == nil {
 		layerIDs = carto.MSS().Layers()
 		for _, layerID := range layerIDs {
 			layers = append(layers,

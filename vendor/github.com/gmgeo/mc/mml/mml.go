@@ -3,6 +3,8 @@ package mml
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -21,7 +23,7 @@ type auxMML struct {
 }
 
 type auxLayer struct {
-	Datasource map[string]interface{}
+	Datasource map[string]interface{} `yaml:"Datasource"`
 	Geometry   string
 	ID         string
 	Name       string
@@ -125,11 +127,13 @@ func newDatasource(params map[string]interface{}) (Datasource, error) {
 	}
 }
 
-func Parse(mml string) (*MML, error) {
+func Parse(r io.Reader) (*MML, error) {
 	aux := auxMML{}
-	// workaround for go-yaml behavior - uppercase keys are ignored
-	mml = strings.Replace(mml, "Datasource", "datasource", -1)
-	err := yaml.Unmarshal([]byte(mml), &aux)
+	input, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
+	err = yaml.Unmarshal(input, &aux)
 	if err != nil {
 		return nil, err
 	}
