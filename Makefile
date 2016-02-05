@@ -3,9 +3,9 @@ all: build/libmagnacarto.so
 build/:
 	mkdir build
 
-build/libmagnacarto.so: *.go build
+build/libmagnacarto.so: build
 	cd build && \
-	go build -buildmode=c-shared -o libmagnacarto.so
+	go build -buildmode=c-shared -o libmagnacarto.so ../libmagnacarto.go
 
 crosscompile: build
 	# requires xgo (https://github.com/karalabe/xgo)
