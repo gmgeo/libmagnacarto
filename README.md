@@ -42,9 +42,9 @@ Let's assume you want to develop within the directory `libmagnacarto`, then do t
 mkdir libmagnacarto
 cd libmagnacarto
 export $GOPATH=`pwd`
-go get github.com/tools/godep
 git clone https://github.com/gmgeo/libmagnacarto src/github.com/gmgeo/libmagnacarto
 cd src/github.com/gmgeo/libmagnacarto
-$GOPATH/bin/godep restore
+glide install
 make
 ```
+Make sure that `glide` is installed, you can either build it from source or obtain binaries at https://github.com/Masterminds/glide.
