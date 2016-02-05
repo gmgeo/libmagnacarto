@@ -48,3 +48,7 @@ glide install
 make
 ```
 Make sure that `glide` is installed, you can either build it from source or obtain binaries at https://github.com/Masterminds/glide.
+
+## Used by
+
+* [gmgeo/node-magnacarto](https://github.com/gmgeo/node-magnacarto)
