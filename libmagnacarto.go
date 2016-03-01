@@ -119,9 +119,7 @@ func build(mmlStr string, baseDir string, options C.Opts) (output, error *C.char
         return nil, C.CString(fmt.Sprint(err))
     }
 
-    b := builder.New(m)
-    b.SetMMLData(mmlData)
-
+    var style bytes.Buffer
     for _, s := range mmlData.Stylesheets {
         if strings.Contains(s, ".mss") {
             r, err := os.Open(filepath.Join(baseDir, s))
@@ -133,14 +131,11 @@ func build(mmlStr string, baseDir string, options C.Opts) (output, error *C.char
                 return nil, C.CString(fmt.Sprint(err))
             }
             r.Close()
-            s = string(content)
+            style.Write(content)
         }
-        b.AddMSS(s)
     }
 
-    if err := b.Build(); err != nil {
-        return nil, C.CString(fmt.Sprint(err))
-    }
+    builder.BuildMapFromString(m, mmlData, style.String())
 
     var buf bytes.Buffer
     if err := m.Write(&buf); err != nil {

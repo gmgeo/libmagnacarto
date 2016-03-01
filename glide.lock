@@ -1,10 +1,10 @@
 hash: 738ac0d0c1903a230aa0c9fcce90f73f6209a8b16e30681605c6330490a72da3
-updated: 2016-02-04T21:31:43.64464181+01:00
+updated: 2016-03-01T20:39:27.533935834+01:00
 imports:
 - name: github.com/BurntSushi/toml
   version: 443a628bc233f634a75bcbdd71fe5350789f1afa
 - name: github.com/gmgeo/mc
-  version: 88422cdba922b2b138f49950e69f3da841c6cfd0
+  version: a27928b410624e80deace71fada0b1aaa19359eb
   subpackages:
   - builder
   - builder/mapnik
