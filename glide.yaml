@@ -1,6 +1,6 @@
 package: github.com/gmgeo/libmagnacarto
 import:
-- package: github.com/gmgeo/mc
+- package: github.com/omniscale/magnacarto
   subpackages:
   - builder
   - builder/mapnik

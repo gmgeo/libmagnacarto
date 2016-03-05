@@ -24,11 +24,11 @@ import (
     "path/filepath"
     "strings"
 
-    "github.com/gmgeo/mc/builder"
-    "github.com/gmgeo/mc/builder/mapnik"
-    "github.com/gmgeo/mc/builder/mapserver"
-    "github.com/gmgeo/mc/config"
-    "github.com/gmgeo/mc/mml"
+    "github.com/omniscale/magnacarto/builder"
+    "github.com/omniscale/magnacarto/builder/mapnik"
+    "github.com/omniscale/magnacarto/builder/mapserver"
+    "github.com/omniscale/magnacarto/config"
+    "github.com/omniscale/magnacarto/mml"
 )
 
 //export buildFromString

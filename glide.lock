@@ -1,10 +1,12 @@
-hash: 738ac0d0c1903a230aa0c9fcce90f73f6209a8b16e30681605c6330490a72da3
-updated: 2016-03-01T20:39:27.533935834+01:00
+hash: 60e559261251271ba4fb0efcce74561d385dad6ac10692d2ac6425ca1c7fd2d8
+updated: 2016-03-05T11:01:00.950278017+01:00
 imports:
 - name: github.com/BurntSushi/toml
   version: 443a628bc233f634a75bcbdd71fe5350789f1afa
-- name: github.com/gmgeo/mc
-  version: a27928b410624e80deace71fada0b1aaa19359eb
+- name: github.com/husl-colors/husl-go
+  version: 5702ceca9df8d6859c989e22797ebb7e5ee18b96
+- name: github.com/omniscale/magnacarto
+  version: ae2bf1c61b95208248f1fdb724927df523d365ca
   subpackages:
   - builder
   - builder/mapnik
@@ -14,10 +16,8 @@ imports:
   - color
   - mss
   - builder/sql
-- name: github.com/husl-colors/husl-go
-  version: 5702ceca9df8d6859c989e22797ebb7e5ee18b96
 - name: gopkg.in/fsnotify.v1
   version: 96c060f6a6b7e0d6f75fddd10efeaca3e5d1bcb0
 - name: gopkg.in/yaml.v2
-  version: f7716cbe52baa25d2e9b0d0da546fcf909fc16b4
+  version: 7ad95dd0798a40da1ccdff6dff35fd177b5edf40
 devImports: []
