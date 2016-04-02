@@ -121,7 +121,7 @@ func build(mmlStr string, baseDir string, options C.Opts) (output, error *C.char
 
     var style bytes.Buffer
     for _, s := range mmlData.Stylesheets {
-        if strings.Contains(s, ".mss") {
+        if strings.HasSuffix(s, ".mss") {
             r, err := os.Open(filepath.Join(baseDir, s))
             if err != nil {
                 return nil, C.CString(fmt.Sprint(err))
