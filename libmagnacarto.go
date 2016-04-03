@@ -132,6 +132,8 @@ func build(mmlStr string, baseDir string, options C.Opts) (output, error *C.char
             }
             r.Close()
             style.Write(content)
+        } else {
+            style.WriteString(s)
         }
     }
 
